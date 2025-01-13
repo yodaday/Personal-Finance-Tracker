@@ -1,8 +1,9 @@
 import React from "react";
 import { useFinanceContext } from "../contexts/FinanceContext";
+import FinanceChart from "./FinanceChart";
 
 const Dashboard: React.FC = () => {
-  const { income, expenses, savings, resetFinanceData } = useFinanceContext();
+  const { income, expenses, savings } = useFinanceContext();
 
   return (
     <div className="dashboard-container">
@@ -22,12 +23,10 @@ const Dashboard: React.FC = () => {
             <p>{`$${savings}`}</p>
           </div>
         </div>
-        <button
-          onClick={resetFinanceData}
-          className="reset-button bg-red-500 text-white px-4 py-2 rounded mt-4"
-        >
-          Reset Data
-        </button>
+        <div className="dashboard-chart mt-6">
+          <h2 className="text-xl font-bold mb-4">Financial Overview</h2>
+          <FinanceChart income={income} expenses={expenses} savings={savings} />
+        </div>
       </div>
     </div>
   );
