@@ -1,5 +1,6 @@
 import React from "react";
 import { useFinanceContext } from "../contexts/FinanceContext";
+import "../styles/dash.css";
 
 const Dashboard: React.FC = () => {
   const { income, expenses, savings, setIncome, setExpenses, setSavings } =
