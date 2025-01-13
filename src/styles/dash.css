@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.reset-button {
+  transition: background-color 0.3s ease;
+}
+.reset-button:hover {
+  background-color: #ff4d4d;
+}
