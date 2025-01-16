@@ -19,11 +19,13 @@ export interface FinanceContextType {
   prevIncome: number;
   prevExpenses: number;
   transactionHistory: Transaction[];
+  savingsGoal: number; // Savings goal state
   setIncome: (value: number) => void;
   setExpenses: (value: number) => void;
   setTransactionHistory: (history: Transaction[]) => void;
   resetFinanceData: () => void;
-  handleDeleteTransaction: (index: number) => void; // Move the delete function here
+  handleDeleteTransaction: (index: number) => void;
+  setSavingsGoal: (goal: number) => void; // Method to set the savings goal
 }
 
 export const FinanceContext = createContext<FinanceContextType | undefined>(
@@ -36,6 +38,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
   const [income, setIncome] = useState<number>(0);
   const [expenses, setExpenses] = useState<number>(0);
   const [savings, setSavings] = useState<number>(income - expenses);
+  const [savingsGoal, setSavingsGoal] = useState<number>(0); // Savings goal
   const [transactionHistory, setTransactionHistory] = useState<Transaction[]>(
     []
   );
@@ -53,14 +56,13 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
     setExpenses(2500);
     setSavings(income - expenses);
     setTransactionHistory([]);
+    setSavingsGoal(0); // Reset savings goal
   };
 
-  // Move the delete logic here
   const handleDeleteTransaction = (index: number): void => {
     const updatedHistory = transactionHistory.filter((_, i) => i !== index);
     setTransactionHistory(updatedHistory);
 
-    // Recalculate income and expenses based on updated transaction history
     let newIncome = 0;
     let newExpenses = 0;
     updatedHistory.forEach((transaction) => {
@@ -75,12 +77,18 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
     setExpenses(newExpenses);
   };
 
+  // Set savings goal
+  const handleSetSavingsGoal = (goal: number): void => {
+    setSavingsGoal(goal);
+  };
+
   return (
     <FinanceContext.Provider
       value={{
         income,
         expenses,
         savings,
+        savingsGoal, // Provide savings goal in context
         prevIncome,
         prevExpenses,
         transactionHistory,
@@ -88,7 +96,8 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
         setExpenses,
         setTransactionHistory,
         resetFinanceData,
-        handleDeleteTransaction, // Provide the function here
+        handleDeleteTransaction,
+        setSavingsGoal: handleSetSavingsGoal, // Provide the function to set goal
       }}
     >
       {children}
