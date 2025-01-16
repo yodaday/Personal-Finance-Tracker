@@ -1,59 +1,64 @@
-import React, {
+import {
   createContext,
-  useContext,
   useState,
   useEffect,
   ReactNode,
+  useContext,
 } from "react";
-import {
-  saveToLocalStorage,
-  getFromLocalStorage,
-  clearLocalStorage,
-} from "../utils/localStorage";
 
-interface FinanceContextType {
+export interface Transaction {
+  type: string;
+  amount: number;
+  category: string;
+}
+
+export interface FinanceContextType {
   income: number;
   expenses: number;
   savings: number;
+  prevIncome: number; // Track previous income value
+  prevExpenses: number; // Track previous expenses value
+  transactionHistory: Transaction[];
   setIncome: (value: number) => void;
   setExpenses: (value: number) => void;
-  setSavings: (value: number) => void;
-  resetFinanceData: () => void; // Add this function to the context
+  setTransactionHistory: (history: Transaction[]) => void;
+  resetFinanceData: () => void;
+  deleteTransaction: (index: number) => void;
 }
 
-const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
+export const FinanceContext = createContext<FinanceContextType | undefined>(
+  undefined
+);
 
 export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [income, setIncome] = useState<number>(() =>
-    getFromLocalStorage<number>("income", 4000)
+  const [income, setIncome] = useState<number>(0);
+  const [expenses, setExpenses] = useState<number>(0);
+  const [savings, setSavings] = useState<number>(income - expenses);
+  const [transactionHistory, setTransactionHistory] = useState<Transaction[]>(
+    []
   );
-  const [expenses, setExpenses] = useState<number>(() =>
-    getFromLocalStorage<number>("expenses", 2500)
-  );
-  const [savings, setSavings] = useState<number>(() =>
-    getFromLocalStorage<number>("savings", 1200)
-  );
+  const [prevIncome, setPrevIncome] = useState<number>(0); // Track previous income
+  const [prevExpenses, setPrevExpenses] = useState<number>(0); // Track previous expenses
 
   useEffect(() => {
-    saveToLocalStorage("income", income);
-  }, [income]);
+    setSavings(income - expenses);
+    setPrevIncome(income); // Update previous income whenever it changes
+    setPrevExpenses(expenses); // Update previous expenses whenever it changes
+  }, [income, expenses]);
 
-  useEffect(() => {
-    saveToLocalStorage("expenses", expenses);
-  }, [expenses]);
-
-  useEffect(() => {
-    saveToLocalStorage("savings", savings);
-  }, [savings]);
-
-  // Reset function to clear state and localStorage
   const resetFinanceData = () => {
-    clearLocalStorage();
     setIncome(4000);
     setExpenses(2500);
-    setSavings(1200);
+    setSavings(income - expenses);
+    setTransactionHistory([]);
+  };
+
+  const deleteTransaction = (index: number) => {
+    setTransactionHistory((prevHistory) =>
+      prevHistory.filter((_, i) => i !== index)
+    );
   };
 
   return (
@@ -62,10 +67,14 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
         income,
         expenses,
         savings,
+        prevIncome, // Provide prevIncome in context
+        prevExpenses, // Provide prevExpenses in context
+        transactionHistory,
         setIncome,
         setExpenses,
-        setSavings,
+        setTransactionHistory,
         resetFinanceData,
+        deleteTransaction,
       }}
     >
       {children}
@@ -73,6 +82,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
   );
 };
 
+// Custom hook to use context
 export const useFinanceContext = () => {
   const context = useContext(FinanceContext);
   if (!context) {

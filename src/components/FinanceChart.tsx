@@ -1,8 +1,15 @@
 import React from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface FinanceChartProps {
   income: number;
@@ -19,9 +26,10 @@ const FinanceChart: React.FC<FinanceChartProps> = ({
     labels: ["Income", "Expenses", "Savings"],
     datasets: [
       {
-        label: "Financial Overview",
+        label: "Amount ($)",
         data: [income, expenses, savings],
-        backgroundColor: ["#4CAF50", "#F44336", "#FFC107"], // Colors for Income, Expenses, Savings
+        backgroundColor: ["#4caf50", "#f44336", "#ffeb3b"], 
+        borderColor: ["#388e3c", "#d32f2f", "#fbc02d"],
         borderWidth: 1,
       },
     ],
@@ -29,22 +37,29 @@ const FinanceChart: React.FC<FinanceChartProps> = ({
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top" as const,
+        display: false,
       },
-      tooltip: {
-        callbacks: {
-          label: (context: any) => {
-            const value = context.raw;
-            return `$${value}`;
-          },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
         },
+      },
+      y: {
+        beginAtZero: true,
       },
     },
   };
 
-  return <Doughnut data={data} options={options} />;
+  return (
+    <div style={{ width: "500px", height: "250px", margin: "0 auto" }}>
+      <Bar data={data} options={options} />
+    </div>
+  );
 };
 
 export default FinanceChart;
