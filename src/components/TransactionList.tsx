@@ -1,8 +1,8 @@
 import React from "react";
-import { useFinanceContext } from "../hooks/hooks";
+import { useTransactions } from "../hooks/hooks";
 
 const TransactionList: React.FC = () => {
-  const { transactionHistory, deleteTransaction } = useFinanceContext(); // Destructure deleteTransaction here
+  const { transactionHistory, deleteTransaction } = useTransactions();
 
   // Handle deleting a transaction by index
   function handleDeleteTransaction(index: number): void {

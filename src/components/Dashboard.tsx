@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import Income from "./Income";
 import TransactionList from "./TransactionList";
 import { useFinanceContext } from "../hooks/hooks";
 import FinanceChart from "./FinanceChart";
 
 const Dashboard: React.FC = () => {
-  const { income, expenses, savings } = useFinanceContext();
+  const { income, expenses, savings, transactionHistory } = useFinanceContext();
+
+  // State to track the expanded state of the income and expense blocks
+  const [isIncomeExpanded, setIsIncomeExpanded] = useState(false);
+  const [isExpensesExpanded, setIsExpensesExpanded] = useState(false);
+
+  // Toggle functions for expanding and collapsing
+  const toggleIncomeExpansion = () => {
+    setIsIncomeExpanded(!isIncomeExpanded);
+  };
+
+  const toggleExpensesExpansion = () => {
+    setIsExpensesExpanded(!isExpensesExpanded);
+  };
+
+  // Filter transactions by type (Income or Expense)
+  const incomeTransactions = transactionHistory.filter(
+    (t) => t.type === "Income"
+  );
+  const expenseTransactions = transactionHistory.filter(
+    (t) => t.type === "Expense"
+  );
 
   return (
     <div className="dashboard-container p-8">
@@ -17,10 +38,40 @@ const Dashboard: React.FC = () => {
           <div className="p-4 bg-green-200 rounded-lg shadow-md">
             <h3 className="font-semibold">Income</h3>
             <p>${income}</p>
+            <button onClick={toggleIncomeExpansion} className="text-blue-500">
+              {isIncomeExpanded ? "Hide Income Details" : "Show Income Details"}
+            </button>
+            {isIncomeExpanded && (
+              <ul>
+                {incomeTransactions.map((transaction, index) => (
+                  <li key={index} className="p-2">
+                    <span>
+                      {transaction.category} - ${transaction.amount.toFixed(2)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div className="p-4 bg-red-200 rounded-lg shadow-md">
             <h3 className="font-semibold">Expenses</h3>
             <p>${expenses}</p>
+            <button onClick={toggleExpensesExpansion} className="text-blue-500">
+              {isExpensesExpanded
+                ? "Hide Expense Details"
+                : "Show Expense Details"}
+            </button>
+            {isExpensesExpanded && (
+              <ul>
+                {expenseTransactions.map((transaction, index) => (
+                  <li key={index} className="p-2">
+                    <span>
+                      {transaction.category} - ${transaction.amount.toFixed(2)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div className="p-4 bg-yellow-200 rounded-lg shadow-md">
             <h3 className="font-semibold">Savings</h3>

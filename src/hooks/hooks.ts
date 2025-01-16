@@ -47,3 +47,12 @@ export const useSavings = () => {
   const { saving } = useFinanceContext();
   return saving;
 };
+
+////////// TransactionList Hooks //////////
+
+export const useTransactions = () => {
+  const { transactionHistory, deleteTransaction } = useFinanceContext();
+  return { transactionHistory, deleteTransaction };
+};
+
+//////FinanceContext.tsx Hooks//////
