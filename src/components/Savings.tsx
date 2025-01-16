@@ -1,8 +1,8 @@
 import React from "react";
-import { useFinanceContext } from "../hooks/hooks";
+import { useSavings } from "../hooks/hooks";
 
 const Savings: React.FC = () => {
-  const { savings } = useFinanceContext();
+  const { savings } = useSavings();
 
   return (
     <div className="p-4 bg-yellow-200 rounded-lg shadow-md">

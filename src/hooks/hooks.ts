@@ -28,6 +28,7 @@ export const useType = () => {
   return { type, setType };
 };
 
+////////// Expense Hooks //////////
 // Hook to manage expense value from expense
 export const useExpenseValue = (initialValue: number = 0) => {
   const [expenseValue, setExpenseValue] = useState<number>(initialValue);
@@ -38,4 +39,11 @@ export const useExpenseValue = (initialValue: number = 0) => {
 export const useExpenseCategory = () => {
   const [expenseCategory, setExpenseCategory] = useState<string>("");
   return { expenseCategory, setExpenseCategory };
+};
+
+////////// Savings Hooks //////////
+
+export const useSavings = () => {
+  const { saving } = useFinanceContext();
+  return saving;
 };
