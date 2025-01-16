@@ -5,22 +5,24 @@ import { useFinanceContext } from "../hooks/hooks";
 import FinanceChart from "./FinanceChart";
 
 const Dashboard: React.FC = () => {
-  const { income, expenses, savings, transactionHistory } = useFinanceContext();
+  const {
+    income,
+    expenses,
+    savings,
+    transactionHistory,
+    setIncome,
+    setExpenses,
+    handleDeleteTransaction,
+  } = useFinanceContext();
 
-  // State to track the expanded state of the income and expense blocks
   const [isIncomeExpanded, setIsIncomeExpanded] = useState(false);
   const [isExpensesExpanded, setIsExpensesExpanded] = useState(false);
 
-  // Toggle functions for expanding and collapsing
-  const toggleIncomeExpansion = () => {
-    setIsIncomeExpanded(!isIncomeExpanded);
-  };
-
-  const toggleExpensesExpansion = () => {
+  const toggleIncomeExpansion = () => setIsIncomeExpanded(!isIncomeExpanded);
+  const toggleExpensesExpansion = () =>
     setIsExpensesExpanded(!isExpensesExpanded);
-  };
 
-  // Filter transactions by type (Income or Expense)
+  // Filter transactions by type
   const incomeTransactions = transactionHistory.filter(
     (t) => t.type === "Income"
   );
@@ -48,6 +50,12 @@ const Dashboard: React.FC = () => {
                     <span>
                       {transaction.category} - ${transaction.amount.toFixed(2)}
                     </span>
+                    <button
+                      onClick={() => handleDeleteTransaction(index)}
+                      className="ml-4 px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -68,6 +76,12 @@ const Dashboard: React.FC = () => {
                     <span>
                       {transaction.category} - ${transaction.amount.toFixed(2)}
                     </span>
+                    <button
+                      onClick={() => handleDeleteTransaction(index)}
+                      className="ml-4 px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
               </ul>

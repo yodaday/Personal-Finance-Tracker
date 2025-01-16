@@ -16,14 +16,14 @@ export interface FinanceContextType {
   income: number;
   expenses: number;
   savings: number;
-  prevIncome: number; // Track previous income value
-  prevExpenses: number; // Track previous expenses value
+  prevIncome: number;
+  prevExpenses: number;
   transactionHistory: Transaction[];
   setIncome: (value: number) => void;
   setExpenses: (value: number) => void;
   setTransactionHistory: (history: Transaction[]) => void;
   resetFinanceData: () => void;
-  deleteTransaction: (index: number) => void;
+  handleDeleteTransaction: (index: number) => void; // Move the delete function here
 }
 
 export const FinanceContext = createContext<FinanceContextType | undefined>(
@@ -39,13 +39,13 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
   const [transactionHistory, setTransactionHistory] = useState<Transaction[]>(
     []
   );
-  const [prevIncome, setPrevIncome] = useState<number>(0); // Track previous income
-  const [prevExpenses, setPrevExpenses] = useState<number>(0); // Track previous expenses
+  const [prevIncome, setPrevIncome] = useState<number>(0);
+  const [prevExpenses, setPrevExpenses] = useState<number>(0);
 
   useEffect(() => {
     setSavings(income - expenses);
-    setPrevIncome(income); // Update previous income whenever it changes
-    setPrevExpenses(expenses); // Update previous expenses whenever it changes
+    setPrevIncome(income);
+    setPrevExpenses(expenses);
   }, [income, expenses]);
 
   const resetFinanceData = () => {
@@ -55,10 +55,24 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
     setTransactionHistory([]);
   };
 
-  const deleteTransaction = (index: number) => {
-    setTransactionHistory((prevHistory) =>
-      prevHistory.filter((_, i) => i !== index)
-    );
+  // Move the delete logic here
+  const handleDeleteTransaction = (index: number): void => {
+    const updatedHistory = transactionHistory.filter((_, i) => i !== index);
+    setTransactionHistory(updatedHistory);
+
+    // Recalculate income and expenses based on updated transaction history
+    let newIncome = 0;
+    let newExpenses = 0;
+    updatedHistory.forEach((transaction) => {
+      if (transaction.type === "Income") {
+        newIncome += transaction.amount;
+      } else if (transaction.type === "Expense") {
+        newExpenses += transaction.amount;
+      }
+    });
+
+    setIncome(newIncome);
+    setExpenses(newExpenses);
   };
 
   return (
@@ -67,14 +81,14 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({
         income,
         expenses,
         savings,
-        prevIncome, // Provide prevIncome in context
-        prevExpenses, // Provide prevExpenses in context
+        prevIncome,
+        prevExpenses,
         transactionHistory,
         setIncome,
         setExpenses,
         setTransactionHistory,
         resetFinanceData,
-        deleteTransaction,
+        handleDeleteTransaction, // Provide the function here
       }}
     >
       {children}
