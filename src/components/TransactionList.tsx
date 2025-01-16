@@ -1,13 +1,8 @@
 import React from "react";
-import { useTransactions } from "../hooks/hooks";
+import { useFinanceContext } from "../hooks/hooks";
 
 const TransactionList: React.FC = () => {
-  const { transactionHistory, deleteTransaction } = useTransactions();
-
-  // Handle deleting a transaction by index
-  function handleDeleteTransaction(index: number): void {
-    deleteTransaction(index); // Use deleteTransaction directly
-  }
+  const { transactionHistory, handleDeleteTransaction } = useFinanceContext();
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md">
